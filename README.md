@@ -54,3 +54,41 @@ flowchart LR
     TRAEFIK -- "HTTP" --> GRAF
 ```
 
+---
+
+## Get Started
+
+### Prérequis
+- docker et docker-compose installés sur votre machine
+- git
+- htpasswd
+
+### cloner le projet
+
+```bash
+git clone https://github.com/yourusername/ot-monitoring.git
+```
+
+### Configuration
+
+Configurer le mot de passe pour l'accès au broker MQTT (Mosquitto) :
+
+```bash
+touch mosquitto/config/passwd
+echo "admin MotDePasse" > mosquitto/config/passwd
+chmod 0700 mosquitto/config/passwd
+```
+
+Configurer l'utilisateur de traefik :
+
+```bash
+htpasswd -nb admin MotDePasse
+```
+
+Modifier la valeur ligne 15 du fichier `traefik/dynamic/dashboard.yml` avec le hash du mot de passe généré.
+
+### Lancer la stack
+
+```bash
+docker-compose up -d
+```

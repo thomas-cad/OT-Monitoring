@@ -1,0 +1,13 @@
+api:
+  dashboard: true
+  insecure: false
+entryPoints:
+  web:
+    address: ":80"
+providers:
+  file:
+    directory: "/dynamic"
+    watch: true
+log:
+  level: INFO
+accessLog: {}

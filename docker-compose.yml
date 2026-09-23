@@ -1,0 +1,52 @@
+services:
+  mqtt5:
+    image: eclipse-mosquitto
+    container_name: mqtt5
+    volumes:
+      - ./mosquitto/config:/mosquitto/config:ro
+      - mosquitto-data:/mosquitto/data:rw
+      - mosquitto-log:/mosquitto/log:rw
+    restart: unless-stopped
+    networks:
+      mqtt-net:
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "echo -e 'GET / HTTP/1.1\\r\\nHost: localhost\\r\\nUpgrade: websocket\\r\\nConnection: Upgrade\\r\\n\\r\\n' | nc -w 5 127.0.0.1 8080 >/dev/null 2>&1 || exit 1",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  traefik:
+    image: traefik:v3.7
+    ports:
+      - "80:80"
+    volumes:
+      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./traefik/dynamic:/dynamic:ro
+    restart: unless-stopped
+    depends_on:
+      - mqtt5
+    networks:
+      reverse-proxy-internal-net:
+      reverse-proxy-pub-net:
+
+volumes:
+  mosquitto-data:
+  mosquitto-log:
+
+networks:
+  mqtt-net:
+    driver: bridge
+    internal: true
+
+  reverse-proxy-internal-net:
+    driver: bridge
+    internal: true
+
+  reverse-proxy-pub-net:
+    driver: bridge
+    internal: false
