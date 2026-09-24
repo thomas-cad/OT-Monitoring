@@ -4,11 +4,15 @@ services:
     container_name: mqtt5
     volumes:
       - ./mosquitto/config:/mosquitto/config:ro
+      - ./mosquitto/acl:/mosquitto/acl:ro
       - mosquitto-data:/mosquitto/data:rw
       - mosquitto-log:/mosquitto/log:rw
     restart: unless-stopped
     networks:
-      mqtt-net:
+      - mqtt-net
+      - test-net
+    ports:
+      - "1883:1883"
     healthcheck:
       test:
         [
@@ -20,8 +24,26 @@ services:
       retries: 3
       start_period: 10s
 
+  # telegraf:
+  #   image: docker.io/telegraf:latest
+  #   container_name: telegraf
+  #   env_file:
+  #     - ./telegraf/.env
+  #   volumes:
+  #       - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+  #   restart: unless-stopped
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #     start_period: 30s
+  #   depends_on:
+  #     - mqtt5
+
   traefik:
     image: traefik:v3.7
+    container_name: traefik
     ports:
       - "80:80"
     volumes:
@@ -42,6 +64,10 @@ networks:
   mqtt-net:
     driver: bridge
     internal: true
+
+  test-net:
+    driver: bridge
+    internal: false
 
   reverse-proxy-internal-net:
     driver: bridge

@@ -13,3 +13,4 @@ http:
       basicAuth:
         users:
           - "admin:$apr1$y3q3XZHV$mLOdYQ4DdpjeN0RNQ1Hcb0"
+          
