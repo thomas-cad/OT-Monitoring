@@ -24,22 +24,24 @@ services:
       retries: 3
       start_period: 10s
 
-  # telegraf:
-  #   image: docker.io/telegraf:latest
-  #   container_name: telegraf
-  #   env_file:
-  #     - ./telegraf/.env
-  #   volumes:
-  #       - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
-  #   restart: unless-stopped
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
-  #     start_period: 30s
-  #   depends_on:
-  #     - mqtt5
+  telegraf:
+    image: docker.io/telegraf:latest
+    container_name: telegraf
+    env_file:
+      - ./telegraf/.env
+    volumes:
+        - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    restart: unless-stopped
+    networks:
+      - mqtt-net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    depends_on:
+      - mqtt5
 
   traefik:
     image: traefik:v3.7

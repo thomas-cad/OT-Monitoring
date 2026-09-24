@@ -76,10 +76,11 @@ Configurer le mot de passe pour l'accès au broker MQTT (Mosquitto) :
 ```bash
 touch mosquitto/config/passwd
 # https://mosquitto.org/man/mosquitto_passwd-1.html
-mosquitto_passwd [ -H hash ] [ -c | -D ] passwordfile username
+mosquitto_passwd ./mosquitto/config/passwd telegraf
 chmod 0700 mosquitto/config/passwd
 
 cp telegraf/.env.example telegraf/.env
+chmod 0700 telegraf/.env
 ```
 
 Modifier les variables d'environnement dans telegraf/.env avec les valeurs créées pour le broker MQTT.
